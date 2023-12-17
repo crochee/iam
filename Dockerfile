@@ -37,7 +37,7 @@ COPY --from=builder /workspace/config ${WorkDir}/config
 # 赋予执行权限
 RUN chmod +x /usr/local/bin/iam /usr/local/bin/entrypoint.sh /usr/local/bin/gosu
 # 将工作目录加入用户组
-RUN chown -R  cloud:dev ${WorkDir}
+RUN chown -R  dev:cloud ${WorkDir}
 # 日志文件夹0744
 RUN chmod u=rwx,g=r,o=r ${WorkDir}/log
 # 配置文件目录和文件0440,只有读权限
