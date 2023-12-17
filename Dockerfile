@@ -9,7 +9,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN go env -w GOPROXY=https://goproxy.io,https://goproxy.cn,direct &&\
     go env -w GO111MODULE=on
 # 代码拷贝
-RUN git clone -b master https://github.com/crochee/iam.git
+RUN git clone -b release-v1.0.1 https://github.com/crochee/iam.git
 # 代码编译
 RUN cd iam && go mod tidy &&\
     GOOS=linux CGO_ENABLED=0 GOARCH=amd64 go build -ldflags="-s -w" -trimpath -o iam -tags jsoniter ./cmd/iam &&\

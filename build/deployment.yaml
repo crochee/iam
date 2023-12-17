@@ -17,7 +17,7 @@ spec:
         app.kubernetes.io/name: iam-server
     spec:
       containers:
-      - image: registry.cn-hangzhou.aliyuncs.com/crochee/iam:1.0.0
+      - image: registry.cn-hangzhou.aliyuncs.com/crochee/iam:1.0.1
         name: iam-server
         ports:
         - containerPort: 31000
