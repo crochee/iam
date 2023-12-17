@@ -41,8 +41,7 @@ RUN chown -R  cloud:dev ${WorkDir}
 # 日志文件夹0744
 RUN chmod u=rwx,g=r,o=r ${WorkDir}/log
 # 配置文件目录和文件0440,只有读权限
-RUN chown -R root:root ${WorkDir}/config &&\
-    chmod -R a+r,o-wx ${WorkDir}/config
+RUN chmod -R a+r,o-wx ${WorkDir}/config
 
 EXPOSE 31000
 STOPSIGNAL 2
