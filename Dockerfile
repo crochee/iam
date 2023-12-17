@@ -22,7 +22,7 @@ RUN mv ./iam/entrypoint.sh . &&\
     cp ${GOPATH}/bin/gosu .
 
 FROM alpine:latest as runner
-ARG WorkDir=/opt/cloud/
+ARG WorkDir=/opt/cloud
 WORKDIR ${WorkDir}
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
 RUN addgroup -g 10000 cloud && adduser -g cloud dev -u 5000 -D -H
