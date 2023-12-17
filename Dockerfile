@@ -1,4 +1,3 @@
-ARG Project=iam
 FROM golang:1.21.5-alpine as builder
 # ARG URL=https://github.com/crochee/${Project}.git
 ARG GOSU_VERSION=1.17
@@ -12,14 +11,14 @@ RUN go env -w GOPROXY=https://goproxy.io,https://goproxy.cn,direct &&\
 # 代码拷贝
 COPY . .
 # 代码编译
-RUN cd &{Project} && go mod tidy &&\
-    GOOS=linux CGO_ENABLED=0 GOARCH=amd64 go build -ldflags="-s -w" -trimpath -o ${Project} -tags jsoniter ./cmd/${Project} &&\
+RUN cd iam && go mod tidy &&\
+    GOOS=linux CGO_ENABLED=0 GOARCH=amd64 go build -ldflags="-s -w" -trimpath -o iam -tags jsoniter ./cmd/iam &&\
     go install github.com/tianon/gosu@${GOSU_VERSION}
 # 整理项目需要拷贝的资源
-RUN mv ./${Project}/entrypoint.sh . &&\
-    mv ./${Project}/config . &&\
+RUN mv ./iam/entrypoint.sh . &&\
+    mv ./iam/config . &&\
     mkdir ./out &&\
-    cp ./${Project}/${Project} ./out/ &&\
+    cp ./iam/iam ./out/ &&\
     cp ${GOPATH}/bin/gosu .
 
 FROM alpine:latest as runner
@@ -32,11 +31,11 @@ RUN mkdir -p ${WorkDir}/conf ${WorkDir}/log
 # 资源拷贝
 COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
 COPY --from=builder /workspace/gosu /usr/local/bin/
-COPY --from=builder /workspace/out/${Project} /usr/local/bin/
+COPY --from=builder /workspace/out/iam /usr/local/bin/
 COPY --from=builder /workspace/entrypoint.sh /usr/local/bin/
 COPY --from=builder /workspace/config ${WorkDir}/config
 # 赋予执行权限
-RUN chmod +x /usr/local/bin/${Project} /usr/local/bin/entrypoint.sh /usr/local/bin/gosu
+RUN chmod +x /usr/local/bin/iam /usr/local/bin/entrypoint.sh /usr/local/bin/gosu
 # 将工作目录加入用户组
 RUN chown -R  dev:dev ${WorkDir}
 # 日志文件夹0744
@@ -49,4 +48,4 @@ EXPOSE 31000
 STOPSIGNAL 2
 
 ENTRYPOINT ["entrypoint.sh"]
-CMD ["${Project}"]
+CMD ["iam"]
