@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iam-server
+  labels:
+    app.kubernetes.io/name: iam-server
+  namespace: iam
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: iam-server
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: iam-server
+    spec:
+      containers:
+      - image: registry.cn-hangzhou.aliyuncs.com/crochee/iam:1.0.0
+        name: iam-server
+        ports:
+        - containerPort: 31000
