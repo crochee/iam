@@ -9,7 +9,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN go env -w GOPROXY=https://goproxy.io,https://goproxy.cn,direct &&\
     go env -w GO111MODULE=on
 # 代码拷贝
-COPY . .
+RUN git clone -b release-v1.0.0 https://github.com/crochee/iam.git
 # 代码编译
 RUN cd iam && go mod tidy &&\
     GOOS=linux CGO_ENABLED=0 GOARCH=amd64 go build -ldflags="-s -w" -trimpath -o iam -tags jsoniter ./cmd/iam &&\
@@ -37,7 +37,7 @@ COPY --from=builder /workspace/config ${WorkDir}/config
 # 赋予执行权限
 RUN chmod +x /usr/local/bin/iam /usr/local/bin/entrypoint.sh /usr/local/bin/gosu
 # 将工作目录加入用户组
-RUN chown -R  dev:dev ${WorkDir}
+RUN chown -R  cloud:dev ${WorkDir}
 # 日志文件夹0744
 RUN chmod u=rwx,g=r,o=r ${WorkDir}/log
 # 配置文件目录和文件0440,只有读权限
