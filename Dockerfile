@@ -12,7 +12,7 @@ RUN go env -w GOPROXY=https://goproxy.io,https://goproxy.cn,direct &&\
 # 代码拷贝
 COPY . .
 # 代码编译
-RUN go mod tidy &&\
+RUN cd &{Project} && go mod tidy &&\
     GOOS=linux CGO_ENABLED=0 GOARCH=amd64 go build -ldflags="-s -w" -trimpath -o ${Project} -tags jsoniter ./cmd/${Project} &&\
     go install github.com/tianon/gosu@${GOSU_VERSION}
 # 整理项目需要拷贝的资源
