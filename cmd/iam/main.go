@@ -17,15 +17,28 @@ import (
 	"github.com/crochee/iam/internal/router"
 	"github.com/sourcegraph/conc/pool"
 	"go.uber.org/multierr"
+
+	"github.com/crochee/iam/internal/store/mysql"
 )
 
 var configFile = flag.String("f", "./config/template.yaml", "the config file")
 
 func main() {
 	flag.Parse()
+	if err := loadConfig(*configFile); err != nil {
+		log.Fatal(err)
+	}
 	if err := run(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		log.Fatal(err)
 	}
+}
+
+func loadConfig(path string) error {
+	absPath, err := filepath.Abs(path)
+	if err != nil {
+		return err
+	}
+	return config.LoadConfig(config.WithConfigFile(absPath))
 }
 
 func run() error {
@@ -37,6 +50,11 @@ func run() error {
 	// gin 设置
 	// gin.DefaultWriter = writer
 	// 初始化数据库
+	store, err := mysql.NewClient(ctx)
+	if err != nil {
+		return err
+	}
+	defer store.Close()
 
 	g := pool.New().WithContext(context.Background()).WithCancelOnError()
 	srv := &http.Server{
